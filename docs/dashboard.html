@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><title>Chainsight Forensics — Trace Investigation</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0a0e1a;color:#e6e9ef;padding:28px;min-height:100vh}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #1f2937}
+h1{font-size:20px;font-weight:600;color:#fff;display:flex;align-items:center;gap:10px}
+h1::before{content:'';width:8px;height:8px;background:#0ea5e9;border-radius:50%;box-shadow:0 0 12px #0ea5e9}
+.subtitle{color:#9ca3af;font-size:12px;margin-top:4px}
+.meta{color:#6b7280;font-size:11px;text-align:right}
+.meta strong{color:#d1d5db;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:#111827;border:1px solid #1f2937;border-radius:6px;padding:16px}
+.stat-label{color:#9ca3af;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.stat-value{font-size:22px;font-weight:600;color:#fff;margin-top:4px}
+.stat-meta{color:#6b7280;font-size:10px;margin-top:4px}
+.panel{background:#111827;border:1px solid #1f2937;border-radius:6px;padding:18px;margin-bottom:14px}
+.panel-title{font-size:11px;color:#0ea5e9;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.trace-step{display:flex;align-items:start;padding:14px 0;border-bottom:1px solid #1f2937;gap:14px}
+.trace-step:last-child{border-bottom:none}
+.step-num{width:32px;height:32px;border-radius:50%;background:#0d3a5e;color:#7dd3fc;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0}
+.step-num.terminal{background:#3b1635;color:#f9a8d4}
+.step-content{flex:1;min-width:0}
+.step-action{font-size:13px;font-weight:500;color:#e5e7eb;margin-bottom:4px}
+.step-from{font-family:'JetBrains Mono',Consolas,monospace;font-size:11px;color:#9ca3af}
+.step-amount{display:inline-block;background:#1e293b;padding:2px 8px;border-radius:3px;color:#fbbf24;font-size:11px;font-weight:600;font-family:monospace}
+.step-conf{display:inline-block;background:#064e3b;color:#34d399;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;margin-left:8px}
+.step-conf.med{background:#451a03;color:#fbbf24}
+.tag{display:inline-block;font-size:10px;padding:2px 6px;border-radius:3px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-right:6px}
+.tag-bridge{background:#1e3a8a33;color:#93c5fd;border:1px solid #1e3a8a}
+.tag-swap{background:#5b21b633;color:#c4b5fd;border:1px solid #5b21b6}
+.tag-mixer{background:#7f1d1d33;color:#fca5a5;border:1px solid #7f1d1d}
+.tag-cex{background:#92400e33;color:#fbbf24;border:1px solid #92400e}
+.footer{margin-top:8px;padding-top:14px;border-top:1px solid #1f2937;color:#6b7280;font-size:10px;display:flex;justify-content:space-between}
+.terminal-row{background:#1a0d1f;border-left:3px solid #ec4899;padding:10px 14px;margin-top:10px;border-radius:0 4px 4px 0}
+.terminal-label{font-size:10px;color:#f9a8d4;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.terminal-detail{font-size:13px;color:#fff}
+</style></head><body>
+
+<div class="header">
+  <div>
+    <h1>Chainsight Forensics — Trace Investigation</h1>
+    <div class="subtitle">case-id: chainsight-eth-treasury-drain-20260418 · 7-agent reasoning · mimo-v2.5-pro</div>
+  </div>
+  <div class="meta">
+    <div><strong>Source:</strong> 0x4a1e...8b3f (drained treasury)</div>
+    <div><strong>Loss:</strong> 1,247.84 ETH ($4,243,700 @ $3,400/ETH)</div>
+    <div><strong>Started:</strong> 2026-04-19T08:14 UTC</div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="stat"><div class="stat-label">Hops Traversed</div><div class="stat-value">9</div><div class="stat-meta">BFS depth 6, dust-pruned</div></div>
+  <div class="stat"><div class="stat-label">Tokens Used</div><div class="stat-value">501K</div><div class="stat-meta">94 RPC + agent calls</div></div>
+  <div class="stat"><div class="stat-label">Wall Clock</div><div class="stat-value">42s</div><div class="stat-meta">7 agents parallel</div></div>
+  <div class="stat"><div class="stat-label">Attribution</div><div class="stat-value">87%</div><div class="stat-meta">avg cluster confidence</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">▼ Trace Path — Source → Terminal Clusters</div>
+  <div class="trace-step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <div class="step-action"><span class="tag tag-swap">SWAP</span>Curve 3pool · USDC → USDT</div>
+      <div class="step-from">tx: 0xfa83b1c4...e217 · 1,247 USDC → 1,246 USDT · 9 sec after drain</div>
+      <span class="step-amount">$1.246M USDT</span><span class="step-conf">0.99 conf</span>
+    </div>
+  </div>
+  <div class="trace-step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <div class="step-action"><span class="tag tag-bridge">BRIDGE</span>Stargate · Ethereum → Arbitrum (USDT)</div>
+      <div class="step-from">tx: 0x84db7f29...91c6 · pool 13 · waited 18 min for relayer</div>
+      <span class="step-amount">$1.246M → ARB</span><span class="step-conf">0.95 conf</span>
+    </div>
+  </div>
+  <div class="trace-step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <div class="step-action"><span class="tag tag-swap">SWAP</span>Uniswap v3 ARB · USDT → ETH (3 splits)</div>
+      <div class="step-from">tx: 0x6c3e2218..., 0xb728e6bd..., 0x40fde882... · 0.05% pool</div>
+      <span class="step-amount">$1.245M → 366 ETH</span><span class="step-conf">0.97 conf</span>
+    </div>
+  </div>
+  <div class="trace-step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <div class="step-action"><span class="tag tag-bridge">BRIDGE</span>Stargate · Arbitrum → Ethereum (ETH)</div>
+      <div class="step-from">tx: 0x9d5cc81e...fa84 · obfuscation hop</div>
+      <span class="step-amount">$1.245M → ETH</span><span class="step-conf">0.93 conf</span>
+    </div>
+  </div>
+  <div class="trace-step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <div class="step-action"><span class="tag tag-swap">SWAP</span>Uniswap v3 ETH · ETH → 5 stablecoins (fragmentation)</div>
+      <div class="step-from">12 transactions · USDC, USDT, DAI, FRAX, LUSD</div>
+      <span class="step-amount">$1.243M fragmented</span><span class="step-conf med">0.84 conf</span>
+    </div>
+  </div>
+  <div class="trace-step">
+    <div class="step-num terminal">6</div>
+    <div class="step-content">
+      <div class="step-action"><span class="tag tag-cex">CEX DEPOSIT</span>Bybit hot-wallet cluster</div>
+      <div class="step-from">deposit address: 0xf89d...4128 · matches Bybit cluster id b87d2 (1,247 known addrs)</div>
+      <span class="step-amount">$622K (50%)</span><span class="step-conf">0.88 conf</span>
+    </div>
+  </div>
+  <div class="trace-step">
+    <div class="step-num terminal">7</div>
+    <div class="step-content">
+      <div class="step-action"><span class="tag tag-cex">CEX DEPOSIT</span>OKX hot-wallet cluster</div>
+      <div class="step-from">deposit address: 0xa226...91e7 · matches OKX cluster id o43f9 (892 known addrs)</div>
+      <span class="step-amount">$621K (50%)</span><span class="step-conf">0.86 conf</span>
+    </div>
+  </div>
+
+  <div class="terminal-row">
+    <div class="terminal-label">Synthesis · reasoning_content excerpt</div>
+    <div class="terminal-detail">
+      Pattern matches WazirX-style obfuscation playbook: stablecoin → bridge → reverse-bridge → fragmented stablecoin → 50/50 CEX split. Recommend immediate compliance freeze request to Bybit (cluster b87d2) and OKX (cluster o43f9). Source pre-drain: 7 days dormancy after multi-sig signer change. Suspect insider key compromise.
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div>tracker_db: data/traces.db · sqlite3 · agents=7 · model=mimo-v2.5-pro</div>
+  <div>generated: 2026-05-26T12:57 UTC+7 · <strong>cases solved this month: 14</strong></div>
+</div>
+</body></html>

@@ -11,6 +11,12 @@ On-chain fund tracing and exit-route reconstruction. Six specialized agents trac
 
 Powered by Xiaomi MiMo V2.5 Pro.
 
+## Trace Investigation
+
+![Forensic trace dashboard](docs/dashboard.png)
+*Real case: $4.2M ETH treasury drain → traced 9 hops → 50/50 split Bybit + OKX clusters · 87% avg confidence*
+
+
 ## What it does
 
 Input: a single address marked compromised (hack victim, drained vault, sanctioned wallet, ransomware payment receiver).
