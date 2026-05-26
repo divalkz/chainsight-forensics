@@ -1,5 +1,12 @@
 # Chainsight Forensics
 
+[![CI](https://github.com/divalkz/chainsight-forensics/actions/workflows/ci.yml/badge.svg)](https://github.com/divalkz/chainsight-forensics/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Powered by Xiaomi MiMo Pro](https://img.shields.io/badge/powered%20by-MiMo%20V2.5%20Pro-ff6700)](https://platform.xiaomimimo.com/)
+[![Agents](https://img.shields.io/badge/agents-7-blueviolet)](#agents)
+
+
 On-chain fund tracing and exit-route reconstruction. Six specialized agents track stolen funds from a hacked address through bridges, mixers, and exchanges, producing a multi-hop trace with attribution confidence per hop.
 
 Powered by Xiaomi MiMo V2.5 Pro.
