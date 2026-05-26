@@ -1,0 +1,28 @@
+{
+  "run_id": "chainsight-eth-treasury-drain-20260418",
+  "model": "mimo-v2.5-pro",
+  "started_at": "2026-04-19T08:14:32Z",
+  "ended_at": "2026-04-19T08:15:14Z",
+  "wall_clock_seconds": 42,
+  "source": {"address": "0x7ab2...c9d1", "tag": "hack_victim", "loss_usd": 4180000},
+  "agents": {
+    "address_tagger":     {"calls":  1, "tokens":   3200, "duration_ms": 1600},
+    "hop_walker":         {"calls": 38, "tokens": 118400, "duration_ms": 14000},
+    "bridge_decoder":     {"calls": 11, "tokens":  91300, "duration_ms": 12400},
+    "mixer_detector":     {"calls":  7, "tokens":  56700, "duration_ms": 8600},
+    "swap_decoder":       {"calls": 24, "tokens": 142800, "duration_ms": 18300},
+    "exchange_resolver":  {"calls": 12, "tokens":  67200, "duration_ms": 8000},
+    "synthesis_reasoner": {"calls":  1, "tokens":  22400, "duration_ms": 5100}
+  },
+  "total_calls": 94,
+  "total_tokens": 501000,
+  "synthesis": {
+    "summary_excerpt": "$4.18M drained from treasury 0x7ab2 split into two equal $1.94M branches after a Curve USDC->USDT swap and Stargate Ethereum->Arbitrum bridge. Both branches deposited to CEX (Bybit + OKX) within 2 hours of the bridge completion.",
+    "terminal_destinations": [
+      {"exchange": "Bybit", "share_of_funds_pct": 46.4, "confidence": 0.88},
+      {"exchange": "OKX",   "share_of_funds_pct": 46.4, "confidence": 0.86},
+      {"exchange": "(unaccounted)", "share_of_funds_pct": 7.2}
+    ],
+    "next_actions_count": 4
+  }
+}
